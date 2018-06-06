@@ -3,7 +3,13 @@ This is meant to be a bare-bones (but fully functional) webpack 4 configuration 
 
 
 ## READ THIS
-I have extracted the core packages from my working React project. This means **that I may have accidently removed packages that are necessary** (but I shouldn't have). **If anything is missing PLEASE let me know and I'll push changes asap**
+I have extracted the core packages from my working React project. This means **that I may have accidently removed packages that are necessary** (but I shouldn't have). **If anything is missing please let me know!**
+
+## Defaults
+- Assumes using CSS-in-JS for styling, no css extracting
+- Assumes the use of redux, react router, and the need to polyfill
+- hmr, code splitting, svg optimized loading, image optimization on build
+- gzipped bundle for your server
 
 ## Optimization
 
@@ -34,7 +40,3 @@ Time: 1931ms
 ...
 ✨ Done in 4.06s.
 ```
-
-
-## Notes
-1. This does not include css/scss/sass/ etc. right away. **You can uncomment+copy the code in `webpack.prod.config.babel.js` into the dev config and try it yourself**. There are problems with webpack4 and ExtractTextPlugin hanging (I'm not sure if it effects this setup, as I have it commented out- using Styled Components). _I will be trying this again in the coming days as I monitor the progess of the packages, the repo will be updated accordingly_.
