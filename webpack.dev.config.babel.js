@@ -2,15 +2,6 @@ import path from 'path'
 
 import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-// import InlineChunkManifestHtmlWebpackPlugin from 'inline-chunk-manifest-html-webpack-plugin'
-
-const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-  title: 'webpack4 Boiler',
-  template: path.join(__dirname, 'src', 'index.ejs'),
-  minify: {
-    collapseWhitespace: true,
-  },
-})
 
 export default {
   devtool: 'cheap-module-source-map',
@@ -36,14 +27,14 @@ export default {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
       },
     }),
-    /* Done automatically in Development env
-      new webpack.NamedModulesPlugin(),
-      new webpack.NoEmitOnErrorsPlugin(),
-    */
-    HtmlWebpackPluginConfig,
-    // new InlineChunkManifestHtmlWebpackPlugin({
-    //   dropAsset: true,
-    // }),
+    new HtmlWebpackPlugin({
+      title: 'webpack4 Boiler',
+      favicon: path.join(__dirname, 'src', 'assets', 'img', 'favicon.ico'),
+      template: path.join(__dirname, 'src', 'index.ejs'),
+      minify: {
+        collapseWhitespace: true,
+      },
+    }),
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.scss', '.json'],
