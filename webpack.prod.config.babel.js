@@ -1,12 +1,9 @@
 import path from 'path'
 
 import webpack from 'webpack'
-// import ExtractTextPlugin from 'extract-text-webpack-plugin'
-// import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-// import InlineChunkManifestHtmlWebpackPlugin from 'inline-chunk-manifest-html-webpack-plugin'
 import WebpackChunkHash from 'webpack-chunk-hash'
-import CompressionPlugin from 'compression-webpack-plugin'
+import WebpackCompressionPlugin from 'compression-webpack-plugin'
 import CleanWebpackPlugin from 'clean-webpack-plugin'
 
 
@@ -16,16 +13,15 @@ export default {
       'babel-polyfill',
       path.join(__dirname, 'src', 'index.js'),
     ],
-    /* https://github.com/webpack/webpack/issues/6357 => chunks: 'all' is best practice
     vendor: [
       'babel-polyfill',
       'react',
-      'react-router-dom',
+      'react-router',
       'react-redux',
       'react-dom',
+      'styled-components',
       'redux',
     ],
-    */
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -42,34 +38,30 @@ export default {
     new CleanWebpackPlugin(['dist']),
     new webpack.HashedModuleIdsPlugin(),
     new WebpackChunkHash(),
-    new CompressionPlugin({
+    new CompressionWebpackPlugin({
       asset: '[path].gz[query]',
       algorithm: 'gzip',
-      test: /\.js$|\.css$|\.html$/,
+      test: new RegExp('\\.(js|css)$'),
       threshold: 10240,
-      minRatio: 0,
+      minRatio: 0.8,
     }),
-    // new ExtractTextPlugin({
-    //   filename: 'assets/[name].[contenthash].css',
-    //   allChunks: true,
-    // }),
     new HtmlWebpackPlugin({
-      title: 'webpack4 Boiler',
+      title: 'webpack4 Boiler',      
+      favicon: path.join(__dirname, 'src', 'favicon.ico'),
       template: path.join(__dirname, 'src', 'index.ejs'),
-      // favicon: path.join(__dirname, 'src', 'favicon.ico'),
-      meta: [
-        {
-          name: 'description',
-          content: 'React boilerplate',
-        },
-      ],
       minify: {
+        removeComments: true,
         collapseWhitespace: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+        removeEmptyAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        keepClosingSlash: true,
+        minifyJS: true,
+        minifyCSS: true,
+        minifyURLs: true,
       },
     }),
-    // new InlineChunkManifestHtmlWebpackPlugin({
-    //   dropAsset: true,
-    // }),
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.scss', '.json'],
@@ -93,37 +85,47 @@ export default {
         use: ['babel-loader'],
         include: path.join(__dirname, 'src'),
       },
-      // {
-      //   test: /\.(scss|sass|css)$/i,
-      //   use: ExtractTextPlugin.extract({
-      //     fallback: 'style-loader',
-      //     use: [
-      //       {
-      //         loader: 'css-loader',
-      //         options: { minimize: true },
-      //       },
-      //       'postcss-loader',
-      //       'sass-loader',
-      //     ],
-      //   }),
-      //   include: path.join(__dirname, 'src'),
-      // },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/,
+        loader: 'image-webpack-loader',
+        enforce: 'pre',
+      },
       {
         test: /\.(jpg|jpeg|png|gif)$/i,
         use: ['file-loader'],
         include: path.join(__dirname, 'src'),
       },
       {
-        test: /\.(eot|tff|woff|woff2|svg)$/i,
-        use: ['raw-loader'],
+        test: /\.svg$/,
+        loader: 'svg-url-loader',
+        options: {
+          limit: 10 * 1024,
+          noquotes: true,
+        },
+      },
+      {
+        test: /\.(eot|ttf|woff|woff2)$/i,
+        use: ['url-loader'],
         include: path.join(__dirname, 'src'),
       },
     ],
   },
   optimization: {
-    minimize: true,
+    concatenateModules: true,
+    minimizer: [
+      new UglifyJSPlugin({
+        sourceMap: true,
+        uglifyOptions: {
+          compress: {
+            inline: false,
+          },
+        },
+      }),
+    ],
+    runtimeChunk: false,
     splitChunks: {
       cacheGroups: {
+        default: false,
         commons: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendor',
@@ -132,6 +134,5 @@ export default {
         },
       },
     },
-    concatenateModules: true, // ModuleConcatenationPlugin
   },
 }
