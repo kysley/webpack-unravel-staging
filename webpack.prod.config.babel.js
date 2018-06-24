@@ -46,7 +46,7 @@ export default {
       minRatio: 0.8,
     }),
     new HtmlWebpackPlugin({
-      title: 'webpack4 Boiler',      
+      title: 'webpack4 Boiler',
       favicon: path.join(__dirname, 'src', 'favicon.ico'),
       template: path.join(__dirname, 'src', 'index.ejs'),
       minify: {
@@ -86,9 +86,21 @@ export default {
         include: path.join(__dirname, 'src'),
       },
       {
-        test: /\.(jpe?g|png|gif|svg)$/,
-        loader: 'image-webpack-loader',
-        enforce: 'pre',
+        test: /\.(jpg|jpeg|png|gif)$/i,
+        use: ['file-loader', {
+          loader: 'image-webpack-loader',
+          options: {
+            optipng: {
+              enabled: true,
+            },
+            pngquant: {
+              quality: '65-90',
+              speed: 4,
+            },
+          },
+        },
+        ],
+        include: path.join(__dirname, 'src'),
       },
       {
         test: /\.(jpg|jpeg|png|gif)$/i,
@@ -126,11 +138,20 @@ export default {
     splitChunks: {
       cacheGroups: {
         default: false,
-        commons: {
-          test: /[\\/]node_modules[\\/]/,
+        vendors: false,
+        vendor: {
           name: 'vendor',
           chunks: 'all',
+          test: /node_modules/,
+          priority: 20,
+        },
+        common: {
+          name: 'common',
           minChunks: 2,
+          chunks: 'all',
+          priority: 10,
+          reuseExistingChunk: true,
+          enforce: true,
         },
       },
     },
