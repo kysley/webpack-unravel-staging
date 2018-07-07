@@ -3,24 +3,16 @@ import path from 'path'
 import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import WebpackChunkHash from 'webpack-chunk-hash'
-import WebpackCompressionPlugin from 'compression-webpack-plugin'
+import CompressionWebpackPlugin from 'compression-webpack-plugin'
 import CleanWebpackPlugin from 'clean-webpack-plugin'
+import UglifyJSPlugin from 'uglifyjs-webpack-plugin'
 
 
 export default {
   entry: {
     app: [
-      'babel-polyfill',
+      '@babel/polyfill',
       path.join(__dirname, 'src', 'index.js'),
-    ],
-    vendor: [
-      'babel-polyfill',
-      'react',
-      'react-router',
-      'react-redux',
-      'react-dom',
-      'styled-components',
-      'redux',
     ],
   },
   output: {
@@ -38,16 +30,16 @@ export default {
     new CleanWebpackPlugin(['dist']),
     new webpack.HashedModuleIdsPlugin(),
     new WebpackChunkHash(),
-    new CompressionWebpackPlugin({
-      asset: '[path].gz[query]',
-      algorithm: 'gzip',
-      test: new RegExp('\\.(js|css)$'),
-      threshold: 10240,
-      minRatio: 0.8,
-    }),
+    // new CompressionWebpackPlugin({
+    //   asset: '[path].gz[query]',
+    //   algorithm: 'gzip',
+    //   test: new RegExp('\\.(js|css)$'),
+    //   threshold: 10240,
+    //   minRatio: 0.8,
+    // }),
     new HtmlWebpackPlugin({
       title: 'webpack4 Boiler',
-      favicon: path.join(__dirname, 'src', 'favicon.ico'),
+      favicon: path.join(__dirname, 'assets', 'img', 'favicon.ico'),
       template: path.join(__dirname, 'src', 'index.ejs'),
       minify: {
         removeComments: true,
@@ -64,17 +56,15 @@ export default {
     }),
   ],
   resolve: {
-    extensions: ['.js', '.jsx', '.scss', '.json'],
+    extensions: ['.js', '.jsx', '.json'],
     modules: [
       path.join(__dirname, 'src'),
       path.join(__dirname, 'node_modules'),
     ],
     alias: {
       Components: path.join(__dirname, 'src/components'),
-      Containers: path.join(__dirname, 'src/containers'),
+      Presentational: path.join(__dirname, 'src/presentational'),
       Styles: path.join(__dirname, 'src/styles'),
-      Reducers: path.join(__dirname, 'src/reducers'),
-      Actions: path.join(__dirname, 'src/actions'),
     },
   },
   module: {
@@ -126,7 +116,7 @@ export default {
     concatenateModules: true,
     minimizer: [
       new UglifyJSPlugin({
-        sourceMap: true,
+        sourceMap: false,
         uglifyOptions: {
           compress: {
             inline: false,

@@ -7,7 +7,6 @@ export default {
   devtool: 'cheap-module-eval-source-map',
   entry: {
     app: [
-      'babel-polyfill',
       './src/index.js',
     ],
   },
@@ -38,17 +37,15 @@ export default {
     }),
   ],
   resolve: {
-    extensions: ['.js', '.jsx', '.scss', '.json'],
+    extensions: ['.js', '.jsx', '.json'],
     modules: [
       path.join(__dirname, 'src'),
       path.join(__dirname, 'node_modules'),
     ],
     alias: {
       Components: path.join(__dirname, 'src/components'),
-      Containers: path.join(__dirname, 'src/containers'),
+      Presentational: path.join(__dirname, 'src/presentational'),
       Styles: path.join(__dirname, 'src/styles'),
-      Reducers: path.join(__dirname, 'src/reducers'),
-      Actions: path.join(__dirname, 'src/actions'),
     },
   },
   module: {
@@ -65,7 +62,7 @@ export default {
         include: path.join(__dirname, 'src'),
       },
       {
-        test: /\.(eot|tff|woff|woff2)$/i,
+        test: /\.(eot|ttf|woff|woff2)$/i,
         use: ['raw-loader'],
         include: path.join(__dirname, 'src'),
       },
